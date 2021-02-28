@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 
 def main():
-    print("Hello")
 
     input_image = cv2.imread('photographs\phone_3.jpg', 0)
 
@@ -19,6 +18,18 @@ def main():
 
     mask = np.zeros(image.shape[:2], dtype=image.dtype)
 
+    def get_largest_contour(contours):
+        largest_contour_area = 0
+        largest_contour = 0
+
+        for c in contours:
+            if cv2.contourArea(c) > largest_contour_area:
+                largest_contour_area = cv2.contourArea(c)
+                largest_contour = c
+
+        return(largest_contour)
+
+
     while True:
 
         combination_thresh = cv2.bitwise_or(thresh, thresh2)
@@ -27,10 +38,10 @@ def main():
 
         contours = cv2.findContours(inverse_thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[0]
 
-        for c in contours:
-            if cv2.contourArea(c) > 30000:
-                x, y, w, h = cv2.boundingRect(c)
-                cv2.drawContours(mask, [c], 0, (255), -1)
+        largest_contour = get_largest_contour(contours)
+
+        x, y, w, h = cv2.boundingRect(largest_contour)
+        cv2.drawContours(mask, [largest_contour], 0, (255), -1)
 
         result = cv2.bitwise_and(image, image, mask=mask)
 
