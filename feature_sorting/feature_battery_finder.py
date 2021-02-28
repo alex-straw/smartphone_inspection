@@ -6,7 +6,7 @@ def no_op(no_op):
 
 def main():
 
-    input_image = cv2.imread('photographs\phone_3Q.jpg', 0)
+    input_image = cv2.imread('photographs\phone_3.jpg', 0)
 
     scale_percent = 20  # percent of original size
     width = int(input_image.shape[1] * scale_percent / 100)
@@ -77,11 +77,10 @@ def main():
             label = ("BATTERY CENTRE X: " + str(x + (w / 2)) + " Y:" + str(y + (h / 2)))
             result = cv2.putText(result, label, (x - 40, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
 
-
             cv2.imshow("Identification", result)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            break
 
 if __name__ == "__main__":
     main()
