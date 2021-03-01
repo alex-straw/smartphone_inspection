@@ -24,7 +24,7 @@ def main():
     cv2.createTrackbar('Lower',"Identification",0,255,no_op)
     cv2.createTrackbar('Upper',"Identification",255,255,no_op)
 
-    mask = np.zeros(image.shape[:2], dtype=image.dtype)
+    #mask = np.zeros(image.shape[:2], dtype=image.dtype)
 
     def get_largest_contour(contours):
         largest_contour_area = -1
@@ -36,20 +36,31 @@ def main():
                 largest_contour = c
 
         if largest_contour_area != 0:
-            return(largest_contour)
+            return(largest_contour,largest_contour_area)
 
-    def draw_largest_contour(largest_contour):
+    def outline_battery(largest_contour):
 
+        mask = np.zeros(image.shape[:2], dtype=image.dtype)
         cv2.drawContours(mask, [largest_contour], 0, (255), -1)
-        result = cv2.bitwise_and(image, image, mask=mask)
+        battery_outline = cv2.bitwise_and(image, image, mask=mask)
 
-        return(result)
+        return(battery_outline)
+
+    def display_output(largest_contour):
+        battery_outline = outline_battery(largest_contour)
+
+        x, y, w, h = cv2.boundingRect(largest_contour)
+
+        label = ("BATTERY CENTRE X: " + str(x + (w / 2)) + " Y:" + str(y + (h / 2)))
+        battery_outline = cv2.putText(battery_outline, label, (x - 40, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+
+        cv2.imshow("Identification", battery_outline)
 
     while True:
 
         image_copy = image.copy()
 
-        """ Get Track bar Data"""
+        """ Get Track bar Data """
 
         trackbar_1 = cv2.getTrackbarPos('Lower','Identification')
         trackbar_2 = cv2.getTrackbarPos('Upper','Identification')
@@ -60,24 +71,20 @@ def main():
         """ Combine image matrices from the two threshold operations : OR """
 
         combination_thresh = cv2.bitwise_or(thresh, thresh2)
+
+        """ NOT flips 0s to 1s in the black & white image """
+
         inverse_thresh = cv2.bitwise_not(combination_thresh)
 
         contours = cv2.findContours(inverse_thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[0]
 
-        largest_contour = get_largest_contour(contours)
+        if len(contours) > 1:
+            largest_contour,largest_contour_area = get_largest_contour(contours)
 
-        if type(largest_contour) is str:
-            pass
+            if type(largest_contour) is not str and largest_contour_area > 0:
+                display_output(largest_contour)
         else:
-            mask = np.zeros(image.shape[:2], dtype=image.dtype)
-            result = draw_largest_contour(largest_contour)
-
-            x, y, w, h = cv2.boundingRect(largest_contour)
-
-            label = ("BATTERY CENTRE X: " + str(x + (w / 2)) + " Y:" + str(y + (h / 2)))
-            result = cv2.putText(result, label, (x - 40, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
-
-            cv2.imshow("Identification", result)
+            pass
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
