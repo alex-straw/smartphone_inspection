@@ -6,7 +6,7 @@ def no_op(no_op):
 
 def main():
 
-    input_image = cv2.imread('photographs\phone_1.jpg', 0)
+    input_image = cv2.imread('photographs\phone_4.jpg', 0)
 
     scale_percent = 20  # percent of original size
     width = int(input_image.shape[1] * scale_percent / 100)
@@ -20,11 +20,10 @@ def main():
     INITIATE TRACKBARS 
     """
     cv2.namedWindow("Identification")
+    cv2.moveWindow("Identification", 40, 30)  # Move it to (40,30)
 
     cv2.createTrackbar('Lower',"Identification",0,255,no_op)
     cv2.createTrackbar('Upper',"Identification",255,255,no_op)
-
-    #mask = np.zeros(image.shape[:2], dtype=image.dtype)
 
     def get_largest_contour(contours):
         largest_contour_area = -1
@@ -59,7 +58,6 @@ def main():
         cv2.imshow("Identification", battery_outline)
 
     while True:
-
         image_copy = image.copy()
 
         """ Get Track bar Data """
