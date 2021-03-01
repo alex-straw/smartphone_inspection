@@ -6,7 +6,7 @@ def no_op(no_op):
 
 def main():
 
-    input_image = cv2.imread('photographs\phone_3.jpg', 0)
+    input_image = cv2.imread('photographs\phone_1.jpg', 0)
 
     scale_percent = 20  # percent of original size
     width = int(input_image.shape[1] * scale_percent / 100)
@@ -37,6 +37,8 @@ def main():
 
         if largest_contour_area != 0:
             return(largest_contour,largest_contour_area)
+        else:
+            return(largest_contour,0)
 
     def outline_battery(largest_contour):
 
@@ -81,7 +83,7 @@ def main():
         if len(contours) > 1:
             largest_contour,largest_contour_area = get_largest_contour(contours)
 
-            if type(largest_contour) is not str and largest_contour_area > 0:
+            if type(largest_contour) is not str and largest_contour_area > 1:
                 display_output(largest_contour)
         else:
             pass
