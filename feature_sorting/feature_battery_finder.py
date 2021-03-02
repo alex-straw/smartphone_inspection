@@ -18,17 +18,20 @@ def get_largest_contour(contours):
     else:
         return(largest_contour,0)
 
+def scale_image(image,scale_percent):
+    width = int(image.shape[1] * scale_percent / 100)
+    height = int(image.shape[0] * scale_percent / 100)
+    dim = (width, height)
+
+    image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+    return(image)
+
 def main():
 
     input_image = cv2.imread('photographs\phone_4.jpg', 0)
+    scale_percent = 20
 
-    scale_percent = 20  # percent of original size
-    width = int(input_image.shape[1] * scale_percent / 100)
-    height = int(input_image.shape[0] * scale_percent / 100)
-    dim = (width, height)
-
-    # resize image
-    image = cv2.resize(input_image, dim, interpolation=cv2.INTER_AREA)
+    image = scale_image(input_image,scale_percent)
 
     """
     INITIATE TRACKBARS 
