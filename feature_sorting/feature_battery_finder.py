@@ -33,6 +33,25 @@ def initiate_trackbars(window_handle):
     cv2.createTrackbar('Lower',window_handle,0,255,no_op)
     cv2.createTrackbar('Upper',window_handle,255,255,no_op)
 
+def outline_battery(largest_contour,image):
+
+    mask = np.zeros(image.shape[:2], dtype=image.dtype)
+    cv2.drawContours(mask, [largest_contour], 0, (255), -1)
+    battery_outline = cv2.bitwise_and(image, image, mask=mask)
+
+    return(battery_outline)
+
+def display_output(largest_contour,image):
+
+    battery_outline = outline_battery(largest_contour,image)
+
+    x, y, w, h = cv2.boundingRect(largest_contour)
+
+    label = ("BATTERY CENTRE X: " + str(x + (w / 2)) + " Y:" + str(y + (h / 2)))
+    battery_outline = cv2.putText(battery_outline, label, (x - 40, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+
+    cv2.imshow("Identification", battery_outline)
+
 def main():
 
     input_image = cv2.imread('photographs\phone_4.jpg', 0)
@@ -43,24 +62,6 @@ def main():
     window_handle = "Identification"
 
     initiate_trackbars(window_handle)
-
-    def outline_battery(largest_contour):
-
-        mask = np.zeros(image.shape[:2], dtype=image.dtype)
-        cv2.drawContours(mask, [largest_contour], 0, (255), -1)
-        battery_outline = cv2.bitwise_and(image, image, mask=mask)
-
-        return(battery_outline)
-
-    def display_output(largest_contour):
-        battery_outline = outline_battery(largest_contour)
-
-        x, y, w, h = cv2.boundingRect(largest_contour)
-
-        label = ("BATTERY CENTRE X: " + str(x + (w / 2)) + " Y:" + str(y + (h / 2)))
-        battery_outline = cv2.putText(battery_outline, label, (x - 40, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
-
-        cv2.imshow("Identification", battery_outline)
 
     while True:
         image_copy = image.copy()
@@ -87,7 +88,7 @@ def main():
             largest_contour,largest_contour_area = get_largest_contour(contours)
 
             if type(largest_contour) is not str and largest_contour_area > 1:
-                display_output(largest_contour)
+                display_output(largest_contour,image_copy)
         else:
             pass
 
