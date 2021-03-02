@@ -36,6 +36,11 @@ def find_shape(image,template):
 
     return(img,w_t,h_t,top_left)
 
+def draw_crosshair(image,battery_centre):
+    cv2.drawMarker(image,battery_centre, color=(255),markerType=cv2.MARKER_CROSS,markerSize=20)
+    return(image)
+
+
 def main():
 
     input_image = cv2.imread('photographs\phone_4.jpg', 0)
@@ -50,18 +55,16 @@ def main():
     cv2.namedWindow("Template Matching")
     cv2.moveWindow("Template Matching", 40, 30)  # Move it to (40,30)
 
-    """ 
-    methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
-               'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
-    """
-
     battery_outlined,w_t,h_t,top_left = find_shape(input_image, template)
 
-    label = ("BATTERY CENTRE X: " + str(top_left[0] + w_t/2) + " Y:" + str(top_left[1] - h_t/2))
+    battery_centre = (int(top_left[0] + w_t/2), int(top_left[1] + h_t/2))
+
+    label = ("BATTERY CENTRE X: " + str(battery_centre[0]) + " Y:" + str(battery_centre[1]))
     battery_label = cv2.putText(battery_outlined, label, (25, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255))
 
     while True:
 
+        battery_outlined = draw_crosshair(battery_outlined,battery_centre)
         cv2.imshow("Template Matching", battery_outlined)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
