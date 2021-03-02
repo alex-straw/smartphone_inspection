@@ -4,6 +4,20 @@ import cv2
 def no_op(no_op):
     pass
 
+def get_largest_contour(contours):
+    largest_contour_area = -1
+    largest_contour = ''
+
+    for c in contours:
+        if cv2.contourArea(c) > largest_contour_area:
+            largest_contour_area = cv2.contourArea(c)
+            largest_contour = c
+
+    if largest_contour_area != 0:
+        return(largest_contour,largest_contour_area)
+    else:
+        return(largest_contour,0)
+
 def main():
 
     input_image = cv2.imread('photographs\phone_4.jpg', 0)
@@ -24,20 +38,6 @@ def main():
 
     cv2.createTrackbar('Lower',"Identification",0,255,no_op)
     cv2.createTrackbar('Upper',"Identification",255,255,no_op)
-
-    def get_largest_contour(contours):
-        largest_contour_area = -1
-        largest_contour = ''
-
-        for c in contours:
-            if cv2.contourArea(c) > largest_contour_area:
-                largest_contour_area = cv2.contourArea(c)
-                largest_contour = c
-
-        if largest_contour_area != 0:
-            return(largest_contour,largest_contour_area)
-        else:
-            return(largest_contour,0)
 
     def outline_battery(largest_contour):
 
