@@ -32,12 +32,9 @@ def find_shape(image,template):
 
     top_left = max_loc
     bottom_right = (top_left[0] + w_t, top_left[1] + h_t)
-    cv2.rectangle(img, top_left, bottom_right, 255, 2)
-    plt.subplot(121), plt.imshow(res, cmap='gray')
-    plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
-    plt.subplot(122), plt.imshow(img, cmap='gray')
-    plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
-    plt.show()
+    cv2.rectangle(img, top_left, bottom_right, (255,0,0), 2)
+
+    return(img,w_t,h_t,top_left)
 
 def main():
 
@@ -58,7 +55,18 @@ def main():
                'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
     """
 
-    find_shape(input_image, template)
+    battery_outlined,w_t,h_t,top_left = find_shape(input_image, template)
+
+    label = ("BATTERY CENTRE X: " + str(top_left[0] + w_t/2) + " Y:" + str(top_left[1] - h_t/2))
+    battery_label = cv2.putText(battery_outlined, label, (25, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255))
+
+    while True:
+
+        cv2.imshow("Template Matching", battery_outlined)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
 
 if __name__ == "__main__":
     main()
