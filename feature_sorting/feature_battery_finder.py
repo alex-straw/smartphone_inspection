@@ -41,25 +41,32 @@ def outline_battery(largest_contour,image):
 
     return(battery_outline)
 
-def display_output(largest_contour,image):
+def display_output(largest_contour,image,window_handle):
 
     battery_outline = outline_battery(largest_contour,image)
 
     x, y, w, h = cv2.boundingRect(largest_contour)
 
-    label = ("BATTERY CENTRE X: " + str(x + (w / 2)) + " Y:" + str(y + (h / 2)))
-    battery_outline = cv2.putText(battery_outline, label, (x - 40, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+    battery_centre = (int(x+w/2),int(y+h/2))
 
-    cv2.imshow("Identification", battery_outline)
+    label = ("BATTERY CENTRE X: " + str(battery_centre[0]) + " Y:" + str(battery_centre[1]))
+    battery_outline = cv2.putText(battery_outline, label, (25, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+
+    battery_outline = draw_crosshair(battery_outline,battery_centre)
+
+    cv2.imshow(window_handle, battery_outline)
+
+def draw_crosshair(image,battery_centre):
+    cv2.drawMarker(image,battery_centre, color=(255),markerType=cv2.MARKER_CROSS,markerSize=20)
+    return(image)
 
 def main():
 
+    window_handle = "Identification"
     input_image = cv2.imread('photographs\phone_4.jpg', 0)
     scale_percent = 20
 
     image = scale_image(input_image,scale_percent)
-
-    window_handle = "Identification"
 
     initiate_trackbars(window_handle)
 
@@ -88,7 +95,7 @@ def main():
             largest_contour,largest_contour_area = get_largest_contour(contours)
 
             if type(largest_contour) is not str and largest_contour_area > 1:
-                display_output(largest_contour,image_copy)
+                display_output(largest_contour,image_copy,window_handle)
         else:
             pass
 
