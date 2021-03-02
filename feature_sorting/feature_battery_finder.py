@@ -26,6 +26,13 @@ def scale_image(image,scale_percent):
     image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
     return(image)
 
+def initiate_trackbars(window_handle):
+    cv2.namedWindow(window_handle)
+    cv2.moveWindow(window_handle, 40, 30)  # Move it to (40,30)
+
+    cv2.createTrackbar('Lower',window_handle,0,255,no_op)
+    cv2.createTrackbar('Upper',window_handle,255,255,no_op)
+
 def main():
 
     input_image = cv2.imread('photographs\phone_4.jpg', 0)
@@ -33,14 +40,9 @@ def main():
 
     image = scale_image(input_image,scale_percent)
 
-    """
-    INITIATE TRACKBARS 
-    """
-    cv2.namedWindow("Identification")
-    cv2.moveWindow("Identification", 40, 30)  # Move it to (40,30)
+    window_handle = "Identification"
 
-    cv2.createTrackbar('Lower',"Identification",0,255,no_op)
-    cv2.createTrackbar('Upper',"Identification",255,255,no_op)
+    initiate_trackbars(window_handle)
 
     def outline_battery(largest_contour):
 
