@@ -46,7 +46,7 @@ for cnt in contours:
     if cv2.contourArea(cnt) > 30000:
         epsilon = 0.1 * cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, epsilon, True)
-        #cv2.drawContours(img, [approx], 0, color=(255,100,0), 3)
+
         cv2.drawContours(img, [approx], 0, (255,100,0),3)
 
         # Position for writing text
