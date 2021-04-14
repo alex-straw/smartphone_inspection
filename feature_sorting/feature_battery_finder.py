@@ -63,7 +63,7 @@ def draw_crosshair(image,battery_centre):
 def main():
 
     window_handle = "Identification"
-    input_image = cv2.imread('photographs_new\Phone_1\Phone_1_6_light.jpg',0)
+    input_image = cv2.imread('photographs_new\Phone_4\Phone_4_8_light.jpg',0)
 
     # Phone 1 natural
     # [63,89]
@@ -110,18 +110,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    # Phone_1_1 --> 48, 84
-    # Phone_1_8 --> 61, 98
-    # Phone_1_15 --> 54, 92
-    # Phone_1_13 --> 52, 86 --> bad
-
-
-    # Phone_2_1.jpg --> 49,104
-    # Phone_2_2.jpg --> 63,123
-    # Phone_2_3.jpg --> 63, 143
-
-    # Diffuse Full Bright Field Lighting -- Massively reducing variation in optimal threshold values
-    # Phone_2_11 --> 64, 149
-    # Phone_2_12 --> 65, 147
-    # Phone_2_13.jpg --> 63, 143
