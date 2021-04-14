@@ -73,27 +73,17 @@ def testing_loop(current_path, all_phones, worksheet):
     for photo_block in range(0, 8):  # 5 photos in each block, 2 phone blocks for each phone, and 8 phones in total
         current_phone = all_phones[photo_block]
 
-        number = current_phone.number
-        thresh_lower = current_phone.number
-        thresh_upper = current_phone.number
+        thresh_lower = current_phone.thresh_lower
+        thresh_upper = current_phone.thresh_upper
+
 
         for photo_number in range(0, 5):
             actual_battery_centre = get_actual_battery_centre(worksheet, current_phone, photo_number)
             image = get_phone_image(current_path, current_phone, photo_number)
 
-            print(actual_battery_centre)
-
-
-
-def build_results_dataframe():
-    results_dataframe ={'Model': ['Phone 1 x','Phone 1 y','Phone 2 x','Phone 2 y','Phone 3 x','Phone 3 y','Phone 4 x','Phone 4 y'],
-                        'Price': [32000,35000,37000,45000]
-                        }
-
+            feature_battery_automatic.find_features(image, thresh_lower, thresh_upper)
 
 def main():
-    #results_matrix = [[0 for x in range(10)] for y in range(2)] * 4
-
     current_path = os.path.dirname(__file__)
     workbook_path = (current_path + '\Actual_Battery_Centres.xlsx')
     worksheet = pandas.read_excel(workbook_path, sheet_name='Sheet1')
