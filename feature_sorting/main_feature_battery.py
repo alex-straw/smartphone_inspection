@@ -75,7 +75,7 @@ def add_data_to_dataframe(number, photo_number, coordinates, dataframe):
     pass
 
 
-def testing_loop_fs(current_path, all_phones, worksheet, results_data):
+def testing_loop_fs(current_path, all_phones, worksheet, results_data_fs):
     for photo_block in range(0, 8):  # 5 photos in each block, 2 phone blocks for each phone, and 8 phones in total
         current_phone = all_phones[photo_block]
 
@@ -91,16 +91,16 @@ def testing_loop_fs(current_path, all_phones, worksheet, results_data):
                                                                                         thresh_upper)
 
             if photo_block % 2 == 0:  # naturally lit photos
-                results_data[(number * 2 - 2), photo_number] = estimated_centre[0]
-                results_data[(number * 2 - 1), photo_number] = estimated_centre[1]
+                results_data_fs[(number * 2 - 2), photo_number] = estimated_centre[0]
+                results_data_fs[(number * 2 - 1), photo_number] = estimated_centre[1]
             else:  # diffuse lit photos
-                results_data[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
-                results_data[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
+                results_data_fs[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
+                results_data_fs[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
 
-    return (results_data)
+    return (results_data_fs)
 
 
-def testing_loop_ts(current_path, all_phones, worksheet, results_data):
+def testing_loop_ts(current_path, all_phones, worksheet, results_data_ts):
     for photo_block in range(0, 8):  # 5 photos in each block, 2 phone blocks for each phone, and 8 phones in total
         current_phone = all_phones[photo_block]
 
@@ -116,13 +116,13 @@ def testing_loop_ts(current_path, all_phones, worksheet, results_data):
             battery_outline, estimated_centre = template_battery_automatic.find_template(image, template)
 
             if photo_block % 2 == 0:  # naturally lit photos
-                results_data[(number * 2 - 2), photo_number] = estimated_centre[0]
-                results_data[(number * 2 - 1), photo_number] = estimated_centre[1]
+                results_data_ts[(number * 2 - 2), photo_number] = estimated_centre[0]
+                results_data_ts[(number * 2 - 1), photo_number] = estimated_centre[1]
             else:  # diffuse lit photos
-                results_data[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
-                results_data[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
+                results_data_ts[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
+                results_data_ts[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
 
-    return (results_data)
+    return (results_data_ts)
 
 
 def setup_results_dataframe(results):
@@ -133,7 +133,8 @@ def setup_results_dataframe(results):
 
 
 def main():
-    empty_results = np.zeros(shape=(8, 10))  # set all results to 0
+    empty_results_fs = np.zeros(shape=(8, 10))  # set all results to 0
+    empty_results_ts = np.zeros(shape=(8, 10))  # set all results to 0
 
     current_path = os.path.dirname(__file__)
     workbook_path = (current_path + '\Actual_Battery_Centres.xlsx')
@@ -141,22 +142,21 @@ def main():
 
     all_phones = initialise_phone_objects()
 
-    results_fs = testing_loop_fs(current_path, all_phones, worksheet, empty_results)
-    results_ts = testing_loop_ts(current_path, all_phones, worksheet, empty_results)
+    results_data_fs = testing_loop_fs(current_path, all_phones, worksheet, empty_results_fs)
+    results_data_ts = testing_loop_ts(current_path, all_phones, worksheet, empty_results_ts)
 
-    results_fs = np.transpose(results_fs)  # tranpose feature sorting results
-    results_ts = np.transpose(results_ts)  # transpose template sorting results
+    results_fs = np.transpose(results_data_fs)  # tranpose feature sorting results
+    results_ts = np.transpose(results_data_ts)  # transpose template sorting results
 
     """     Set up 3 data frames --> one for each battery finding method     """
 
     feature_sorting_results_df = setup_results_dataframe(results_fs)  # Feature sorting data frame
     template_sorting_results_df = setup_results_dataframe(results_ts)  # Template sorting data frame
-
     print("feature sorting results data frame")
     print(feature_sorting_results_df)
-
     print("template sorting results data frame")
     print(template_sorting_results_df)
+
 
 
 
