@@ -27,11 +27,6 @@ def get_battery_from_shape(image, thresh_lower, thresh_upper, epsilon, cnt_area,
     ret, thresh = cv2.threshold(image, thresh_lower, 255, cv2.THRESH_BINARY_INV)
     ret2, thresh2 = cv2.threshold(image, thresh_upper, 255, cv2.THRESH_BINARY)
 
-    print(thresh_lower)
-    print(thresh_upper)
-    print(epsilon)
-    print(cnt_area)
-
     """ Combine image matrices from the two threshold operations : OR """
 
     combination_thresh = cv2.bitwise_or(thresh, thresh2)
@@ -67,7 +62,7 @@ def get_battery_from_shape(image, thresh_lower, thresh_upper, epsilon, cnt_area,
         else:
             pass
     if battery_centre == []:
-        return image, [50,50]
+        return image, [0,0]
     else:
         return image, battery_centre
 

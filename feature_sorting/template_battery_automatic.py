@@ -5,6 +5,14 @@ from matplotlib import pyplot as plt
 def no_op(no_op):
     pass
 
+def scale_image(image,scale_percent):
+    width = int(image.shape[1] * scale_percent / 100)
+    height = int(image.shape[0] * scale_percent / 100)
+    dim = (width, height)
+
+    image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+    return(image)
+
 def remove_background(image):
     ret, thresh = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
     background_removed = cv2.bitwise_or(thresh,image)
@@ -46,5 +54,19 @@ def find_template(image,template):
     battery_label = draw_crosshair(battery_label,battery_centre)
 
     return(battery_outlined,battery_centre)
+
+def manual_testing():
+    image = cv2.imread('photographs_new\Phone_1\Phone_1_1_natural.jpg',0)
+    template = cv2.imread('photographs_new\Phone_1\Template_1_natural.jpg',0)
+    image = remove_background(image)
+
+    battery_outlined, battery_centre = find_template(image,template)
+
+    final_image = scale_image(battery_outlined,scale_percent=20)
+
+    cv2.imshow("test",final_image)
+    cv2.waitKey()
+
+#manual_testing()
 
 
