@@ -11,28 +11,29 @@ import gc
 
 
 class Phone:
-    def __init__(self, number, thresh_lower, thresh_upper, epsilon, cnt_area, lighting, template_path):
+    def __init__(self, number, thresh_lower, thresh_upper, epsilon, cnt_area,upper_cnt_area, lighting, template_path):
         self.number = number
         self.thresh_lower = thresh_lower
         self.thresh_upper = thresh_upper
         self.epsilon = epsilon  # Used for approximating in find_battery_shape.py
         self.cnt_area = cnt_area
+        self.upper_cnt_area = upper_cnt_area
         self.lighting = lighting
         self.template_path = template_path
 
 
 def initialise_phone_objects():
-    Phone_1_unlit = Phone(1, 62, 88, 0.05, 500000, False, 'photographs_new\Phone_1\Template_1_natural.jpg')
-    phone_1_lit = Phone(1, 66, 105, 0.05, 10000, True, 'photographs_new\Phone_1\Template_1_light.jpg')
+    Phone_1_unlit = Phone(1, 62, 88, 0.05, 500000,1000000, False, 'photographs_new\Phone_1\Template_1_natural.jpg')
+    phone_1_lit = Phone(1, 66, 105, 0.05, 500000,1000000, True, 'photographs_new\Phone_1\Template_1_light.jpg')
 
-    phone_2_unlit = Phone(2, 22, 56, 0.05, 100000, False, 'photographs_new\Phone_2\Template_2_natural.jpg')
-    phone_2_lit = Phone(2, 22, 56, 0.05, 100000, True, 'photographs_new\Phone_2\Template_2_light.jpg')
+    phone_2_unlit = Phone(2, 19, 61, 0.005, 50000,800000, False, 'photographs_new\Phone_2\Template_2_natural.jpg')
+    phone_2_lit = Phone(2, 25, 120, 0.05, 50000,1000000, True, 'photographs_new\Phone_2\Template_2_light.jpg')
 
-    phone_3_unlit = Phone(3, 28, 53, 0.02, 500000, False, 'photographs_new\Phone_3\Template_3_natural.jpg')
-    phone_3_lit = Phone(3, 46, 90, 0.02, 500000, True, 'photographs_new\Phone_3\Template_3_light.jpg')
+    phone_3_unlit = Phone(3, 35, 53, 0.02, 500000,1000000, False, 'photographs_new\Phone_3\Template_3_natural.jpg')
+    phone_3_lit = Phone(3, 42, 73, 0.025, 500000,1000000, True, 'photographs_new\Phone_3\Template_3_light.jpg')
 
-    phone_4_unlit = Phone(4, 57, 90, 0.05, 500000, False, 'photographs_new\Phone_4\Template_4_natural.jpg')
-    phone_4_lit = Phone(4, 56, 179, 0.05, 500000, True, 'photographs_new\Phone_4\Template_4_light.jpg')
+    phone_4_unlit = Phone(4, 57, 90, 0.02, 80000,1000000, False, 'photographs_new\Phone_4\Template_4_natural.jpg')
+    phone_4_lit = Phone(4, 56, 179, 0.03, 80000,1000000, True, 'photographs_new\Phone_4\Template_4_light.jpg')
 
     all_phones = [Phone_1_unlit, phone_1_lit, phone_2_unlit, phone_2_lit, phone_3_unlit, phone_3_lit, phone_4_unlit,
                   phone_4_lit]
@@ -95,8 +96,8 @@ def testing_loop_fs(current_path, all_phones, worksheet, results_data_fs):
                 results_data_fs[(number * 2 - 2), photo_number] = estimated_centre[0]
                 results_data_fs[(number * 2 - 1), photo_number] = estimated_centre[1]
             else:  # diffuse lit photos
-                results_data_fs[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
-                results_data_fs[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
+                results_data_fs[(number * 2 - 2), photo_number + 6] = estimated_centre[0]
+                results_data_fs[(number * 2 - 1), photo_number + 6] = estimated_centre[1]
 
     return results_data_fs
 
@@ -110,6 +111,7 @@ def testing_loop_ss(current_path, all_phones, worksheet, results_data_ss):
         thresh_upper = current_phone.thresh_upper
         epsilon = current_phone.epsilon
         cnt_area = current_phone.cnt_area
+        upper_cnt_area = current_phone.upper_cnt_area
 
         for photo_number in range(0, 5):
             actual_battery_centre = get_actual_battery_centre(worksheet, current_phone, photo_number)
@@ -117,7 +119,8 @@ def testing_loop_ss(current_path, all_phones, worksheet, results_data_ss):
 
             shape_image, estimated_centre = shape_battery_automatic.get_battery_from_shape(image, thresh_lower,
                                                                                            thresh_upper,
-                                                                                           epsilon, cnt_area)
+                                                                                           epsilon, cnt_area,
+                                                                                           upper_cnt_area)
 
             if photo_block % 2 == 0:  # naturally lit photos
                 results_data_ss[(number * 2 - 2), photo_number] = estimated_centre[0]
@@ -172,23 +175,26 @@ def main():
 
     all_phones = initialise_phone_objects()
 
+    """
     results_data_fs = testing_loop_fs(current_path, all_phones, worksheet, empty_results_fs)
     results_data_ts = testing_loop_ts(current_path, all_phones, worksheet, empty_results_ts)
-    results_data_ss = testing_loop_ss(current_path, all_phones, worksheet, empty_results_ss)
 
     results_fs = np.transpose(results_data_fs)  # tranpose feature sorting results
     results_ts = np.transpose(results_data_ts)  # transpose template sorting results
-    results_ss = np.transpose(results_data_ss)  # transpose shape sorting results
 
-    """     Set up 3 data frames --> one for each battery finding method     """
+    # Set up 3 data frames --> one for each battery finding method 
 
     feature_sorting_results_df = setup_results_dataframe(results_fs)  # Feature sorting data frame
     template_sorting_results_df = setup_results_dataframe(results_ts)  # Template sorting data frame
-    shape_sorting_results_df = setup_results_dataframe(results_ss)  # Template sorting data frame
     print("feature sorting results data frame")
     print(feature_sorting_results_df)
     print("template sorting results data frame")
     print(template_sorting_results_df)
+    """
+
+    results_data_ss = testing_loop_ss(current_path, all_phones, worksheet, empty_results_ss)
+    results_ss = np.transpose(results_data_ss)  # transpose shape sorting results
+    shape_sorting_results_df = setup_results_dataframe(results_ss)  # Template sorting data frame
     print("shape sorting results data frame")
     print(shape_sorting_results_df)
 
