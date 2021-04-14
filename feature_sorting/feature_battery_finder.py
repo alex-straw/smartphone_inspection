@@ -63,7 +63,7 @@ def draw_crosshair(image,battery_centre):
 def main():
 
     window_handle = "Identification"
-    input_image = cv2.imread('photographs_new\Phone_1\Phone_1_1_natural.jpg',0)
+    input_image = cv2.imread('photographs_new\Phone_1\Phone_1_6_light.jpg',0)
 
     # Phone 1 natural
     # [63,89]
