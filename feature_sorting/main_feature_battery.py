@@ -54,6 +54,11 @@ def get_phone_image(current_path, current_phone, photo_number):
     return image
 
 
+def error(actual,estimated):
+    error = (100*((abs(actual-estimated))/actual))
+    return error
+
+
 def get_actual_battery_centre(worksheet, current_phone, photo_number):
     # unlit images are 1,2,3,4,5
     # lit images are 6,7,8,9,10
@@ -90,13 +95,15 @@ def testing_loop_fs(current_path, all_phones, worksheet, results_data_fs):
 
             battery_outline, estimated_centre = feature_battery_automatic.find_features(image, thresh_lower,
                                                                                         thresh_upper)
+            error_centre = [error(actual_battery_centre[0],estimated_centre[0]),
+                            error(actual_battery_centre[1],estimated_centre[1])]
 
             if photo_block % 2 == 0:  # naturally lit photos
-                results_data_fs[(number * 2 - 2), photo_number] = estimated_centre[0]
-                results_data_fs[(number * 2 - 1), photo_number] = estimated_centre[1]
+                results_data_fs[(number * 2 - 2), photo_number] = error_centre[0]
+                results_data_fs[(number * 2 - 1), photo_number] = error_centre[1]
             else:  # diffuse lit photos
-                results_data_fs[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
-                results_data_fs[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
+                results_data_fs[(number * 2 - 2), photo_number + 5] = error_centre[0]
+                results_data_fs[(number * 2 - 1), photo_number + 5] = error_centre[1]
 
     return results_data_fs
 
@@ -120,13 +127,15 @@ def testing_loop_ss(current_path, all_phones, worksheet, results_data_ss):
                                                                                            thresh_upper,
                                                                                            epsilon, cnt_area,
                                                                                            upper_cnt_area)
+            error_centre = [error(actual_battery_centre[0], estimated_centre[0]),
+                            error(actual_battery_centre[1], estimated_centre[1])]
 
             if photo_block % 2 == 0:  # naturally lit photos
-                results_data_ss[(number * 2 - 2), photo_number] = estimated_centre[0]
-                results_data_ss[(number * 2 - 1), photo_number] = estimated_centre[1]
+                results_data_ss[(number * 2 - 2), photo_number] = error_centre[0]
+                results_data_ss[(number * 2 - 1), photo_number] = error_centre[1]
             else:  # diffuse lit photos
-                results_data_ss[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
-                results_data_ss[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
+                results_data_ss[(number * 2 - 2), photo_number + 5] = error_centre[0]
+                results_data_ss[(number * 2 - 1), photo_number + 5] = error_centre[1]
 
     return results_data_ss
 
@@ -146,12 +155,15 @@ def testing_loop_ts(current_path, all_phones, worksheet, results_data_ts):
 
             battery_outline, estimated_centre = template_battery_automatic.find_template(image, template)
 
+            error_centre = [error(actual_battery_centre[0], estimated_centre[0]),
+                            error(actual_battery_centre[1], estimated_centre[1])]
+
             if photo_block % 2 == 0:  # naturally lit photos
-                results_data_ts[(number * 2 - 2), photo_number] = estimated_centre[0]
-                results_data_ts[(number * 2 - 1), photo_number] = estimated_centre[1]
+                results_data_ts[(number * 2 - 2), photo_number] = error_centre[0]
+                results_data_ts[(number * 2 - 1), photo_number] = error_centre[1]
             else:  # diffuse lit photos
-                results_data_ts[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
-                results_data_ts[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
+                results_data_ts[(number * 2 - 2), photo_number + 5] = error_centre[0]
+                results_data_ts[(number * 2 - 1), photo_number + 5] = error_centre[1]
 
     return results_data_ts
 
@@ -180,17 +192,23 @@ def main():
     print("feature sorting results data frame")
     print(feature_sorting_results_df)
 
+    feature_sorting_results_df.to_excel("fs_results.xlsx", sheet_name='Sheet_name_1')
+
     results_data_ts = testing_loop_ts(current_path, all_phones, worksheet, empty_results_ts)
     results_ts = np.transpose(results_data_ts)  # transpose template sorting results
     template_sorting_results_df = setup_results_dataframe(results_ts)  # Template sorting data frame
     print("template sorting results data frame")
     print(template_sorting_results_df)
 
+    template_sorting_results_df.to_excel("ts_results.xlsx", sheet_name='Sheet_name_2')
+
     results_data_ss = testing_loop_ss(current_path, all_phones, worksheet, empty_results_ss)
     results_ss = np.transpose(results_data_ss)  # transpose shape sorting results
     shape_sorting_results_df = setup_results_dataframe(results_ss)  # Template sorting data frame
     print("shape sorting results data frame")
     print(shape_sorting_results_df)
+
+    shape_sorting_results_df.to_excel("ss_results.xlsx", sheet_name='Sheet_name_3')
 
 
 if __name__ == '__main__':
