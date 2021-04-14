@@ -28,7 +28,6 @@ def draw_crosshair(image,battery_centre):
     cv2.drawMarker(image,battery_centre, color=(255),markerType=cv2.MARKER_CROSS,markerSize=200,thickness=10)
     return(image)
 
-
 def find_template(image,template):
 
     input_image = image
@@ -47,4 +46,5 @@ def find_template(image,template):
     battery_label = draw_crosshair(battery_label,battery_centre)
 
     return(battery_outlined,battery_centre)
+
 

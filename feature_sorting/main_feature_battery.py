@@ -5,6 +5,7 @@ import xlrd
 from matplotlib import pyplot as plt
 import feature_battery_automatic
 import template_battery_automatic
+import shape_battery_automatic
 import os
 import gc
 
@@ -21,7 +22,7 @@ class Phone:
 
 
 def initialise_phone_objects():
-    Phone_1_unlit = Phone(1, 62, 88, 0.05, 10000, False, 'photographs_new\Phone_1\Template_1_natural.jpg')
+    Phone_1_unlit = Phone(1, 62, 88, 0.05, 500000, False, 'photographs_new\Phone_1\Template_1_natural.jpg')
     phone_1_lit = Phone(1, 66, 105, 0.05, 10000, True, 'photographs_new\Phone_1\Template_1_light.jpg')
 
     phone_2_unlit = Phone(2, 22, 56, 0.05, 100000, False, 'photographs_new\Phone_2\Template_2_natural.jpg')
@@ -68,7 +69,7 @@ def get_actual_battery_centre(worksheet, current_phone, photo_number):
     x = worksheet.iloc[row, column_x]
     y = worksheet.iloc[row, column_y]
 
-    return ([x, y])
+    return [x, y]
 
 
 def add_data_to_dataframe(number, photo_number, coordinates, dataframe):
@@ -97,7 +98,35 @@ def testing_loop_fs(current_path, all_phones, worksheet, results_data_fs):
                 results_data_fs[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
                 results_data_fs[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
 
-    return (results_data_fs)
+    return results_data_fs
+
+
+def testing_loop_ss(current_path, all_phones, worksheet, results_data_ss):
+    for photo_block in range(0, 8):  # 5 photos in each block, 2 phone blocks for each phone, and 8 phones in total
+        current_phone = all_phones[photo_block]
+
+        number = current_phone.number
+        thresh_lower = current_phone.thresh_lower
+        thresh_upper = current_phone.thresh_upper
+        epsilon = current_phone.epsilon
+        cnt_area = current_phone.cnt_area
+
+        for photo_number in range(0, 5):
+            actual_battery_centre = get_actual_battery_centre(worksheet, current_phone, photo_number)
+            image = get_phone_image(current_path, current_phone, photo_number)
+
+            shape_image, estimated_centre = shape_battery_automatic.get_battery_from_shape(image, thresh_lower,
+                                                                                           thresh_upper,
+                                                                                           epsilon, cnt_area)
+
+            if photo_block % 2 == 0:  # naturally lit photos
+                results_data_ss[(number * 2 - 2), photo_number] = estimated_centre[0]
+                results_data_ss[(number * 2 - 1), photo_number] = estimated_centre[1]
+            else:  # diffuse lit photos
+                results_data_ss[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
+                results_data_ss[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
+
+    return results_data_ss
 
 
 def testing_loop_ts(current_path, all_phones, worksheet, results_data_ts):
@@ -122,7 +151,7 @@ def testing_loop_ts(current_path, all_phones, worksheet, results_data_ts):
                 results_data_ts[(number * 2 - 2), photo_number + 5] = estimated_centre[0]
                 results_data_ts[(number * 2 - 1), photo_number + 5] = estimated_centre[1]
 
-    return (results_data_ts)
+    return results_data_ts
 
 
 def setup_results_dataframe(results):
@@ -135,6 +164,7 @@ def setup_results_dataframe(results):
 def main():
     empty_results_fs = np.zeros(shape=(8, 10))  # set all results to 0
     empty_results_ts = np.zeros(shape=(8, 10))  # set all results to 0
+    empty_results_ss = np.zeros(shape=(8, 10))  # set all results to 0
 
     current_path = os.path.dirname(__file__)
     workbook_path = (current_path + '\Actual_Battery_Centres.xlsx')
@@ -144,20 +174,23 @@ def main():
 
     results_data_fs = testing_loop_fs(current_path, all_phones, worksheet, empty_results_fs)
     results_data_ts = testing_loop_ts(current_path, all_phones, worksheet, empty_results_ts)
+    results_data_ss = testing_loop_ss(current_path, all_phones, worksheet, empty_results_ss)
 
     results_fs = np.transpose(results_data_fs)  # tranpose feature sorting results
     results_ts = np.transpose(results_data_ts)  # transpose template sorting results
+    results_ss = np.transpose(results_data_ss)  # transpose shape sorting results
 
     """     Set up 3 data frames --> one for each battery finding method     """
 
     feature_sorting_results_df = setup_results_dataframe(results_fs)  # Feature sorting data frame
     template_sorting_results_df = setup_results_dataframe(results_ts)  # Template sorting data frame
+    shape_sorting_results_df = setup_results_dataframe(results_ss)  # Template sorting data frame
     print("feature sorting results data frame")
     print(feature_sorting_results_df)
     print("template sorting results data frame")
     print(template_sorting_results_df)
-
-
+    print("shape sorting results data frame")
+    print(shape_sorting_results_df)
 
 
 if __name__ == '__main__':
