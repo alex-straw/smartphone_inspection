@@ -7,7 +7,7 @@ def draw_crosshair(image, battery_centre):
     return (image)
 
 def remove_background(image):
-    ret, thresh = cv2.threshold(image, 190, 255, cv2.THRESH_BINARY)
+    ret, thresh = cv2.threshold(image, 185, 255, cv2.THRESH_BINARY)
     background_removed = cv2.bitwise_or(thresh,image)
     return(background_removed)
 
