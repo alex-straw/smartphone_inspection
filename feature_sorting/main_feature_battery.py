@@ -29,7 +29,7 @@ def initialise_phone_objects():
     phone_2_unlit = Phone(2, 0, 25, 0.025, 500000, 1000000, False, 'photographs_new\Phone_2\Template_2_natural.jpg')
     phone_2_lit = Phone(2, 62, 166, 0.025, 50000, 800000, True, 'photographs_new\Phone_2\Template_2_light.jpg')
 
-    phone_3_unlit = Phone(3, 35, 53, 0.02, 500000, 1000000, False, 'photographs_new\Phone_3\Template_3_natural.jpg')
+    phone_3_unlit = Phone(3, 40, 69, 0.02, 500000, 1000000, False, 'photographs_new\Phone_3\Template_3_natural.jpg')
     phone_3_lit = Phone(3, 42, 73, 0.025, 500000, 1000000, True, 'photographs_new\Phone_3\Template_3_light.jpg')
 
     phone_4_unlit = Phone(4, 57, 90, 0.02, 80000, 1000000, False, 'photographs_new\Phone_4\Template_4_natural.jpg')

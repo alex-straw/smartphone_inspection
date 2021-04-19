@@ -63,7 +63,7 @@ def draw_crosshair(image,battery_centre):
 def main():
 
     window_handle = "Identification"
-    input_image = cv2.imread('photographs_new\Phone_4\Phone_4_8_light.jpg',0)
+    input_image = cv2.imread('photographs_new\Phone_3\Phone_3_1_natural.jpg',0)
 
     # Phone 1 natural
     # [63,89]
@@ -87,6 +87,9 @@ def main():
         ret, thresh = cv2.threshold(image_copy, trackbar_1, 255, cv2.THRESH_BINARY_INV)
         ret2, thresh2 = cv2.threshold(image_copy, trackbar_2, 255, cv2.THRESH_BINARY)
 
+
+        #phone 4 --> 35,53
+
         """ Combine image matrices from the two threshold operations : OR """
 
         combination_thresh = cv2.bitwise_or(thresh, thresh2)
@@ -95,7 +98,9 @@ def main():
 
         inverse_thresh = cv2.bitwise_not(combination_thresh)
 
+
         contours = cv2.findContours(inverse_thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[0]
+
 
         if len(contours) > 1:
             largest_contour,largest_contour_area = get_largest_contour(contours)

@@ -54,7 +54,7 @@ def get_battery_from_shape(image, thresh_lower, thresh_upper, epsilon, cnt_area,
 
                 cv2.putText(image, str(battery_centre), (25, 150), cv2.FONT_HERSHEY_COMPLEX, 5, (0, 255, 255), 10)
 
-                image = draw_crosshair(image, battery_centre)
+                #image = draw_crosshair(image, battery_centre)
 
                 label = ("BATTERY CENTRE X: " + str(battery_centre[0]) + " Y:" + str(battery_centre[1]))
                 image = cv2.putText(image, label, (25, 20), cv2.FONT_HERSHEY_SIMPLEX, 10, 255)
@@ -68,13 +68,13 @@ def get_battery_from_shape(image, thresh_lower, thresh_upper, epsilon, cnt_area,
 
 def manual_testing():
     # testing
-    image = cv2.imread('photographs_new\Phone_3\Phone_3_6_light.jpg', 0)
+    image = cv2.imread('photographs_new\Phone_3\Phone_3_1_natural.jpg', 0)
 
-    thresh_lower = 42 #40
-    thresh_upper = 73 #92
-    epsilon = 0.025
-    cnt_area = 500000
-    upper_cnt_area = 1000000
+    thresh_lower = 37 #40
+    thresh_upper = 59 #92
+    epsilon = 0.1
+    cnt_area = 300000
+    upper_cnt_area = 800000
 
     image, battery_centre = get_battery_from_shape(image, thresh_lower, thresh_upper, epsilon, cnt_area,upper_cnt_area)
 
@@ -82,3 +82,5 @@ def manual_testing():
     print(battery_centre)
     cv2.imshow("hi", image)
     cv2.waitKey()
+
+manual_testing()
