@@ -8,6 +8,7 @@ import template_battery_automatic
 import shape_battery_automatic
 import os
 import gc
+import math
 
 class Phone:
     def __init__(self, number, thresh_lower, thresh_upper, epsilon, cnt_area, upper_cnt_area, lighting, template_path):
@@ -22,17 +23,17 @@ class Phone:
 
 
 def initialise_phone_objects():
-    Phone_1_unlit = Phone(1, 62, 88, 0.05, 1000000, 2000000, False, 'photographs_new\Phone_1\Template_1_natural.jpg')
-    phone_1_lit = Phone(1, 66, 105, 0.05, 1000000, 2000000, True, 'photographs_new\Phone_1\Template_1_light.jpg')
+    Phone_1_unlit = Phone(1, 62, 88, 0.05, 500000, 1000000, False, 'photographs_new\Phone_1\Template_1_natural.jpg')
+    phone_1_lit = Phone(1, 66, 105, 0.05, 500000, 1000000, True, 'photographs_new\Phone_1\Template_1_light.jpg')
 
-    phone_2_unlit = Phone(2, 19, 61, 0.005, 50000, 800000, False, 'photographs_new\Phone_2\Template_2_natural.jpg')
-    phone_2_lit = Phone(2, 25, 120, 0.05, 50000, 1000000, True, 'photographs_new\Phone_2\Template_2_light.jpg')
+    phone_2_unlit = Phone(2, 0, 25, 0.025, 500000, 1000000, False, 'photographs_new\Phone_2\Template_2_natural.jpg')
+    phone_2_lit = Phone(2, 62, 166, 0.025, 50000, 800000, True, 'photographs_new\Phone_2\Template_2_light.jpg')
 
     phone_3_unlit = Phone(3, 35, 53, 0.02, 500000, 1000000, False, 'photographs_new\Phone_3\Template_3_natural.jpg')
     phone_3_lit = Phone(3, 42, 73, 0.025, 500000, 1000000, True, 'photographs_new\Phone_3\Template_3_light.jpg')
 
     phone_4_unlit = Phone(4, 57, 90, 0.02, 80000, 1000000, False, 'photographs_new\Phone_4\Template_4_natural.jpg')
-    phone_4_lit = Phone(4, 56, 179, 0.025, 80000, 1000000, True, 'photographs_new\Phone_4\Template_4_light.jpg')
+    phone_4_lit = Phone(4, 47, 122, 0.03, 80000, 1000000, True, 'photographs_new\Phone_4\Template_4_light.jpg')
 
     all_phones = [Phone_1_unlit, phone_1_lit, phone_2_unlit, phone_2_lit, phone_3_unlit, phone_3_lit, phone_4_unlit,
                   phone_4_lit]
@@ -108,8 +109,12 @@ def testing_loop_fs(current_path, all_phones, worksheet, results_data_fs):
                                                                                         thresh_upper)
             write_image(battery_outline, photo_number, current_phone,tag)
 
-            error_centre = [error(actual_battery_centre[0],estimated_centre[0]),
-                            error(actual_battery_centre[1],estimated_centre[1])]
+            error_centre = [actual_battery_centre[0]-estimated_centre[0],
+                            actual_battery_centre[1]-estimated_centre[1]]
+
+            if abs(error_centre[0]) > 145 or abs(error_centre[1]) > 145:
+                error_centre[0] = math.nan
+                error_centre[1] = math.nan
 
             if photo_block % 2 == 0:  # naturally lit photos
                 results_data_fs[(number * 2 - 2), photo_number] = error_centre[0]
@@ -142,8 +147,12 @@ def testing_loop_ss(current_path, all_phones, worksheet, results_data_ss):
                                                                                            epsilon, cnt_area,
                                                                                            upper_cnt_area)
             write_image(shape_image, photo_number, current_phone,tag)
-            error_centre = [error(actual_battery_centre[0], estimated_centre[0]),
-                            error(actual_battery_centre[1], estimated_centre[1])]
+            error_centre = [actual_battery_centre[0]-estimated_centre[0],
+                            actual_battery_centre[1]-estimated_centre[1]]
+
+            if abs(error_centre[0]) > 145 or abs(error_centre[1]) > 145:
+                error_centre[0] = math.nan
+                error_centre[1] = math.nan
 
             if photo_block % 2 == 0:  # naturally lit photos
                 results_data_ss[(number * 2 - 2), photo_number] = error_centre[0]
@@ -173,8 +182,8 @@ def testing_loop_ts(current_path, all_phones, worksheet, results_data_ts):
 
             write_image(battery_outline,photo_number,current_phone,tag)
 
-            error_centre = [error(actual_battery_centre[0], estimated_centre[0]),
-                            error(actual_battery_centre[1], estimated_centre[1])]
+            error_centre = [actual_battery_centre[0]-estimated_centre[0],
+                            actual_battery_centre[1]-estimated_centre[1]]
 
             if photo_block % 2 == 0:  # naturally lit photos
                 results_data_ts[(number * 2 - 2), photo_number] = error_centre[0]
