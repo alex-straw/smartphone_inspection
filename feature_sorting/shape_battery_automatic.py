@@ -82,5 +82,3 @@ def manual_testing():
     print(battery_centre)
     cv2.imshow("hi", image)
     cv2.waitKey()
-
-manual_testing()

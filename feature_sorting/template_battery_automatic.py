@@ -56,8 +56,8 @@ def find_template(image,template):
     return(battery_outlined,battery_centre)
 
 def manual_testing():
-    image = cv2.imread('photographs_new\Phone_1\Phone_1_1_natural.jpg',0)
-    template = cv2.imread('photographs_new\Phone_1\Template_1_natural.jpg',0)
+    image = cv2.imread('photographs_new\Phone_3\Phone_3_1_natural.jpg',0)
+    template = cv2.imread('photographs_new\Phone_3\Template_3_natural.jpg',0)
     image = remove_background(image)
 
     battery_outlined, battery_centre = find_template(image,template)
@@ -66,7 +66,5 @@ def manual_testing():
 
     cv2.imshow("test",final_image)
     cv2.waitKey()
-
-#manual_testing()
 
 
