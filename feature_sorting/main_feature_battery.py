@@ -9,6 +9,7 @@ import shape_battery_automatic
 import os
 import gc
 import math
+import time
 
 class Phone:
     def __init__(self, number, thresh_lower, thresh_upper, epsilon, cnt_area, upper_cnt_area, lighting, template_path):
@@ -93,6 +94,7 @@ def add_data_to_dataframe(number, photo_number, coordinates, dataframe):
 
 
 def testing_loop_fs(current_path, all_phones, worksheet, results_data_fs):
+    tic = time.time()
     tag = 'fs'
     for photo_block in range(0, 8):  # 5 photos in each block, 2 phone blocks for each phone, and 8 phones in total
         current_phone = all_phones[photo_block]
@@ -123,10 +125,13 @@ def testing_loop_fs(current_path, all_phones, worksheet, results_data_fs):
                 results_data_fs[(number * 2 - 2), photo_number + 5] = error_centre[0]
                 results_data_fs[(number * 2 - 1), photo_number + 5] = error_centre[1]
 
+    toc = time.time()
+    print (toc-tic, 'sec Elapsed')
     return results_data_fs
 
 
 def testing_loop_ss(current_path, all_phones, worksheet, results_data_ss):
+    tic = time.time()
     tag = 'ss'
     for photo_block in range(0, 8):  # 5 photos in each block, 2 phone blocks for each phone, and 8 phones in total
         current_phone = all_phones[photo_block]
@@ -161,10 +166,13 @@ def testing_loop_ss(current_path, all_phones, worksheet, results_data_ss):
                 results_data_ss[(number * 2 - 2), photo_number + 5] = error_centre[0]
                 results_data_ss[(number * 2 - 1), photo_number + 5] = error_centre[1]
 
+    toc = time.time()
+    print (toc-tic, 'sec Elapsed')
     return results_data_ss
 
 
 def testing_loop_ts(current_path, all_phones, worksheet, results_data_ts):
+    tic = time.time()
     tag = 'ts'
     for photo_block in range(0, 8):  # 5 photos in each block, 2 phone blocks for each phone, and 8 phones in total
         current_phone = all_phones[photo_block]
@@ -192,6 +200,8 @@ def testing_loop_ts(current_path, all_phones, worksheet, results_data_ts):
                 results_data_ts[(number * 2 - 2), photo_number + 5] = error_centre[0]
                 results_data_ts[(number * 2 - 1), photo_number + 5] = error_centre[1]
 
+    toc = time.time()
+    print (toc-tic, 'sec Elapsed')
     return results_data_ts
 
 
